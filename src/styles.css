@@ -1,0 +1,200 @@
+@import "tailwindcss" source(none);
+@source "./routes";
+@source "./components/BottomNav.tsx";
+@source "./components/EventTrustBadges.tsx";
+@source "./components/LanguageSwitcher.tsx";
+@source "./components/PostIt.tsx";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-postit-music: var(--postit-music);
+  --color-postit-sport: var(--postit-sport);
+  --color-postit-social: var(--postit-social);
+  --color-postit-cultura: var(--postit-cultura);
+  --color-postit-food: var(--postit-food);
+  --color-postit-night: var(--postit-night);
+
+  --font-hand: ui-rounded, "Arial Rounded MT Bold", system-ui, sans-serif;
+  --font-hand-clean: ui-rounded, system-ui, sans-serif;
+  --font-body: system-ui, sans-serif;
+}
+
+:root {
+  --radius: 0.5rem;
+
+  --background: oklch(0.97 0.025 96);
+  --foreground: oklch(0.22 0.04 260);
+
+  --card: oklch(0.995 0.01 100);
+  --card-foreground: oklch(0.22 0.04 260);
+
+  --popover: oklch(0.995 0.01 100);
+  --popover-foreground: oklch(0.22 0.04 260);
+
+  --primary: oklch(0.58 0.22 29);
+  --primary-foreground: oklch(0.99 0.01 100);
+
+  --secondary: oklch(0.92 0.11 220);
+  --secondary-foreground: oklch(0.22 0.04 260);
+
+  --muted: oklch(0.93 0.035 250);
+  --muted-foreground: oklch(0.45 0.05 260);
+
+  --accent: oklch(0.82 0.18 145);
+  --accent-foreground: oklch(0.22 0.04 260);
+
+  --destructive: oklch(0.6 0.22 25);
+  --destructive-foreground: oklch(0.99 0.01 100);
+
+  --border: oklch(0.78 0.05 255);
+  --input: oklch(0.98 0.015 250);
+  --ring: oklch(0.65 0.2 310);
+
+  --postit-music: oklch(0.91 0.17 95);
+  --postit-sport: oklch(0.88 0.16 145);
+  --postit-social: oklch(0.88 0.13 220);
+  --postit-cultura: oklch(0.86 0.13 305);
+  --postit-food: oklch(0.87 0.17 45);
+  --postit-night: oklch(0.86 0.16 355);
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-body);
+    background-image:
+      linear-gradient(
+        135deg,
+        oklch(0.92 0.15 25 / 0.24),
+        oklch(0.93 0.16 85 / 0.2) 18%,
+        oklch(0.92 0.15 145 / 0.2) 35%,
+        oklch(0.92 0.14 210 / 0.22) 55%,
+        oklch(0.92 0.13 285 / 0.2) 75%,
+        oklch(0.92 0.15 350 / 0.22)
+      ),
+      radial-gradient(circle at 20% 30%, oklch(0.72 0.17 25 / 0.16) 0 1px, transparent 2px),
+      radial-gradient(circle at 75% 55%, oklch(0.72 0.16 215 / 0.14) 0 1px, transparent 2px);
+    background-size:
+      cover,
+      58px 58px,
+      76px 76px;
+  }
+}
+
+@layer utilities {
+  .paper-texture {
+    background-image:
+      repeating-linear-gradient(0deg, transparent 0 3px, oklch(0 0 0 / 0.012) 3px 4px),
+      repeating-linear-gradient(90deg, transparent 0 3px, oklch(0 0 0 / 0.012) 3px 4px);
+  }
+  .postit-shadow {
+    box-shadow:
+      0 1px 1px oklch(0 0 0 / 0.08),
+      0 6px 14px -4px oklch(0 0 0 / 0.25),
+      0 14px 28px -10px oklch(0 0 0 / 0.18);
+  }
+  .postit-shadow-lg {
+    box-shadow:
+      0 2px 2px oklch(0 0 0 / 0.1),
+      0 12px 28px -8px oklch(0 0 0 / 0.3),
+      0 24px 50px -16px oklch(0 0 0 / 0.22);
+  }
+  .rainbow-text {
+    color: transparent;
+    background-image: linear-gradient(
+      90deg,
+      oklch(0.62 0.23 25),
+      oklch(0.75 0.18 85),
+      oklch(0.67 0.18 145),
+      oklch(0.62 0.19 220),
+      oklch(0.58 0.2 300),
+      oklch(0.62 0.22 355)
+    );
+    background-clip: text;
+  }
+  .rainbow-logo {
+    background-image: linear-gradient(
+      135deg,
+      oklch(0.64 0.23 25),
+      oklch(0.82 0.19 88),
+      oklch(0.72 0.2 145),
+      oklch(0.66 0.2 220),
+      oklch(0.61 0.2 300),
+      oklch(0.66 0.22 355)
+    );
+  }
+  .nessuno-postit-marker {
+    background: transparent;
+    border: 0;
+  }
+  .tape {
+    position: absolute;
+    width: 60px;
+    height: 18px;
+    background: oklch(0.95 0.03 90 / 0.7);
+    border: 1px solid oklch(0.85 0.04 80 / 0.4);
+    box-shadow: 0 1px 2px oklch(0 0 0 / 0.1);
+  }
+}
+
+@keyframes stick-it {
+  0% {
+    transform: translateY(-40px) rotate(var(--r, 0deg)) scale(1.05);
+    opacity: 0;
+  }
+  60% {
+    transform: translateY(4px) rotate(calc(var(--r, 0deg) - 1deg)) scale(0.98);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(0) rotate(var(--r, 0deg)) scale(1);
+    opacity: 1;
+  }
+}
+.animate-stick {
+  animation: stick-it 0.5s cubic-bezier(0.4, 1.4, 0.5, 1) both;
+}
+
+@keyframes wiggle {
+  0%,
+  100% {
+    transform: rotate(var(--r, 0deg));
+  }
+  50% {
+    transform: rotate(calc(var(--r, 0deg) + 2deg)) scale(1.04);
+  }
+}
+.hover-wiggle:hover {
+  animation: wiggle 0.4s ease-in-out;
+}

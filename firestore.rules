@@ -1,0 +1,105 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return signedIn() && request.auth.token.admin == true;
+    }
+
+    function visibleStatus(status) {
+      return status in ['community', 'spontaneous', 'verified'];
+    }
+
+    function reportDocPath(postId) {
+      return /databases/$(database)/documents/reports/$(postId + '_' + request.auth.uid);
+    }
+
+    match /posts/{postId} {
+      allow read: if visibleStatus(resource.data.status)
+        || (signedIn() && resource.data.author_id == request.auth.uid)
+        || isAdmin();
+
+      allow create: if signedIn()
+        && request.resource.data.author_id == request.auth.uid
+        && request.resource.data.creator_id == request.auth.uid
+        && !(request.resource.data.status in ['verified', 'hidden', 'rejected']);
+
+      allow update: if isAdmin()
+        || (
+          signedIn()
+          && resource.data.author_id == request.auth.uid
+          && !request.resource.data.diff(resource.data).affectedKeys().hasAny([
+            'status',
+            'verification_score',
+            'report_count',
+            'creator_trust_score',
+            'creator_is_verified_organizer'
+          ])
+        )
+        || (
+          signedIn()
+          && getAfter(reportDocPath(postId)).data.event_id == postId
+          && getAfter(reportDocPath(postId)).data.reporter_id == request.auth.uid
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+            'report_count',
+            'status',
+            'updated_at'
+          ])
+          && request.resource.data.report_count == resource.data.report_count + 1
+          && (
+            (request.resource.data.report_count < 3
+              && request.resource.data.status == resource.data.status)
+            || (request.resource.data.report_count >= 3
+              && request.resource.data.report_count < 5
+              && request.resource.data.status == 'under_review')
+            || (request.resource.data.report_count >= 5
+              && request.resource.data.status == 'hidden')
+          )
+        );
+
+      allow delete: if signedIn()
+        && (
+          resource.data.author_id == request.auth.uid
+          || resource.data.expires_at <= request.time
+        );
+    }
+
+    match /reports/{reportId} {
+      allow read: if isAdmin();
+      allow create: if signedIn()
+        && request.resource.data.reporter_id == request.auth.uid
+        && reportId == request.resource.data.event_id + '_' + request.auth.uid;
+      allow update, delete: if false;
+    }
+
+    match /profiles/{userId} {
+      allow read: if signedIn();
+      allow create: if signedIn()
+        && userId == request.auth.uid
+        && request.resource.data.trust_score == 0
+        && request.resource.data.is_verified_organizer == false;
+      allow update: if isAdmin()
+        || (
+          signedIn()
+          && userId == request.auth.uid
+          && !request.resource.data.diff(resource.data).affectedKeys().hasAny([
+            'trust_score',
+            'is_verified_organizer',
+            'verification_status'
+          ])
+        )
+        || (
+          signedIn()
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+            'reports_received_count'
+          ])
+          && request.resource.data.reports_received_count == resource.data.reports_received_count + 1
+        );
+      allow delete: if false;
+    }
+  }
+}
